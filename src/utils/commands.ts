@@ -45,6 +45,18 @@ export function registerCommands(Beatscape: BeatscapeClient) {
     if (!interaction.isCommand()) return;
     await interaction.deferReply();
 
+    const guild = Beatscape.client.guilds.cache.get(interaction.guildId);
+    const member = guild.members.cache.get(interaction.member.user.id);
+    const voiceChannel = member.voice.channel;
+
+    if (!voiceChannel) {
+      await interaction.deleteReply();
+      interaction.channel.send(
+        'You need to be in a voice channel to control Beatscape!'
+      );
+      return;
+    }
+
     const { commandName, options } = interaction;
     const search = options.getString('search');
 
