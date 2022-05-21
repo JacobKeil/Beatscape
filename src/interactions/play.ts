@@ -4,6 +4,7 @@ import ytdl from 'ytdl-core';
 import { BeatscapeClient, QueuePromise, Song } from '../common/interfaces.js';
 import { makeQueueEmbed } from '../utils/embed.js';
 import {
+  createLog,
   fetchData,
   getPlaylistById,
   getVideoById,
@@ -32,12 +33,6 @@ export async function playSong(
     );
   }
 
-  if (!voiceChannel) {
-    return interaction.channel.send(
-      'You need to be in a voice channel to play music!'
-    );
-  }
-
   if (!validate) {
     url = search(args);
   } else if (validate) {
@@ -51,6 +46,7 @@ export async function playSong(
   }
 
   songs = await fetchData(url);
+  createLog(interaction, songs[0]);
   const musicQueue: QueuePromise = Beatscape.queue.get(interaction.guild.id);
 
   if (!musicQueue) {
