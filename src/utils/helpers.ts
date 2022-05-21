@@ -1,11 +1,13 @@
 import { config } from 'dotenv';
 config();
 
-const youtube_key = process.env.YOUTUBE_API;
+const youtube_key = process.env.YOUTUBE_API_KEY;
+const domain = process.env.DOMAIN;
 const endpoint_start = `https://www.googleapis.com/youtube/v3`;
 import axios from 'axios';
 import { decode } from 'html-entities';
-import { Song } from '../common/interfaces';
+import { Log, Song } from '../common/interfaces';
+import { Interaction } from 'discord.js';
 
 export async function fetchData(url: string) {
   let videos: Array<Song> = [];
@@ -29,6 +31,24 @@ export async function fetchData(url: string) {
   }
 
   return videos;
+}
+
+export async function createLog(interaction: Interaction, song: Song) {
+  let log: Log = {
+    discordId: interaction.member.user.id,
+    guildId: interaction.guild.id,
+    guildName: interaction.guild.name,
+    song: song,
+    username: `${interaction.member.user.username}#${interaction.member.user.discriminator}`,
+    date: new Date().toISOString(),
+  };
+
+  try {
+    const response = await axios.post(`https://${domain}/api/logs`, log);
+    console.log(response);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export function search(args: string) {
