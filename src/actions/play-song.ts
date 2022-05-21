@@ -26,7 +26,7 @@ export async function playOneSong(
       await ytldDiscord(song.url, {
         filter: 'audioonly',
         quality: 'highestaudio',
-        highWaterMark: 1073741824,
+        highWaterMark: 1 << 25,
       }),
       {
         inputType: StreamType.Opus,
