@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, EmbedFooterData } from 'discord.js';
 import { Song } from '../common/interfaces';
 
 export function makeStreamEmbed(song: Song) {
@@ -7,27 +7,19 @@ export function makeStreamEmbed(song: Song) {
     .setColor('#c70606')
     .setThumbnail(song.thumbnail)
     .setDescription(song.title)
+    .setFooter({
+      text: `[Link to video](${song.url})`,
+    })
     .setTimestamp();
   return streamEmbed;
 }
 
 export function makeQueueEmbed(songs: Song[]) {
   let queueEmbed: MessageEmbed;
-  if (songs.length === 1) {
-    queueEmbed = new MessageEmbed()
-      .setTitle(`1 Song Added`)
-      .setColor('#c70606')
-      .setThumbnail(songs[0].thumbnail)
-      .setDescription(`[${songs[0].title}](${songs[0].url})`)
-      .setTimestamp();
-  }
-
-  if (songs.length > 1) {
-    queueEmbed = new MessageEmbed()
-      .setTitle(`${songs.length} Songs Added`)
-      .setColor('#c70606')
-      .setTimestamp();
-  }
+  queueEmbed = new MessageEmbed()
+    .setTitle(`${songs.length} Songs Added`)
+    .setColor('#c70606')
+    .setTimestamp();
 
   return queueEmbed;
 }
