@@ -18,7 +18,7 @@ export function makeQueueEmbed(songs: Song[]) {
       .setTitle(`1 Song Added`)
       .setColor('#c70606')
       .setThumbnail(songs[0].thumbnail)
-      .setDescription(songs[0].title)
+      .setDescription(`[${songs[0].title}](${songs[0].url})`)
       .setTimestamp();
   }
 
@@ -26,7 +26,6 @@ export function makeQueueEmbed(songs: Song[]) {
     queueEmbed = new MessageEmbed()
       .setTitle(`${songs.length} Songs Added`)
       .setColor('#c70606')
-      .setThumbnail(songs[0].thumbnail)
       .setTimestamp();
   }
 
