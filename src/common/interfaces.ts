@@ -7,6 +7,15 @@ export interface Song {
   url: string;
 }
 
+export interface Log {
+  discordId: string;
+  guildId: string;
+  guildName: string;
+  song: Song;
+  username: string;
+  date: string;
+}
+
 export interface QueuePromise {
   textChannel: TextBasedChannel;
   voiceChannel: VoiceBasedChannel;
