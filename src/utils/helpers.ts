@@ -65,7 +65,7 @@ export async function createLog(
 }
 
 /**
- * Destroys
+ * Destroys queue object for server
  * @param {CustomClient} Beatscape - DiscordJS client
  * @param {string} guildId - Guild ID from interaction object
  * @param {any} err - Error object
@@ -74,6 +74,15 @@ export function endSession(Beatscape: CustomClient, guildId: string, err: any) {
   console.log(err);
   Beatscape.queue.get(guildId).connection.destroy();
   Beatscape.queue.delete(guildId);
+}
+
+/**
+ * Get avatar for specific user
+ * @param {BaseCommandInteraction} interaction - Interaction object
+ * @returns {string} Constructed avatar URL
+ */
+export function getAvatar(interaction: BaseCommandInteraction): string {
+  return `https://cdn.discordapp.com/avatars/${interaction.member.user.id}/${interaction.member.user.avatar}`;
 }
 
 /**
