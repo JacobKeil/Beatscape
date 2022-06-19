@@ -6,10 +6,15 @@ const domain = process.env.DOMAIN;
 const endpoint_start = `https://www.googleapis.com/youtube/v3`;
 import axios from 'axios';
 import { decode } from 'html-entities';
-import { Log, Song } from '../common/interfaces';
-import { Interaction } from 'discord.js';
+import { BaseCommandInteraction } from 'discord.js';
+import { CustomClient, Log, Song } from '../common/interfaces';
 
-export async function fetchData(url: string) {
+/**
+ * Fetch YouTube data from user request
+ * @param {string} url - Desired endpoint URL
+ * @returns {Song[]} Array of songs
+ */
+export async function fetchData(url: string): Promise<Song[]> {
   let videos: Array<Song> = [];
   let video_results: any[] = [];
 
@@ -33,7 +38,15 @@ export async function fetchData(url: string) {
   return videos;
 }
 
-export async function createLog(interaction: Interaction, song: Song) {
+/**
+ * Creates database log of requested song
+ * @param {Interaction} interaction - Interaction object from user input
+ * @param {Song} song - Song object that was played
+ */
+export async function createLog(
+  interaction: BaseCommandInteraction,
+  song: Song
+) {
   let log: Log = {
     discordId: interaction.member.user.id,
     guildId: interaction.guild.id,
@@ -45,20 +58,48 @@ export async function createLog(interaction: Interaction, song: Song) {
 
   try {
     const response = await axios.post(`https://${domain}/api/logs`, log);
-    console.log(response);
+    console.log(response.data);
   } catch (err) {
     console.log(err);
   }
 }
 
-export function search(args: string) {
+/**
+ * Destroys
+ * @param {CustomClient} Beatscape - DiscordJS client
+ * @param {string} guildId - Guild ID from interaction object
+ * @param {any} err - Error object
+ */
+export function endSession(Beatscape: CustomClient, guildId: string, err: any) {
+  console.log(err);
+  Beatscape.queue.get(guildId).connection.destroy();
+  Beatscape.queue.delete(guildId);
+}
+
+/**
+ * Get video by user search
+ * @param {string} args - Desired endpoint URL
+ * @returns {string} Constructed youtube endpoint
+ */
+export function search(args: string): string {
   return `${endpoint_start}/search?part=snippet&maxResults=1&q=${args}&type=video&key=${youtube_key}`;
 }
 
-export function getVideoById(id: string) {
+/**
+ * Get video by ID
+ * @param {string} id - ID of YouTube video
+ * @returns {string} Constructed youtube endpoint
+ */
+export function getVideoById(id: string): string {
   return `${endpoint_start}/videos?part=snippet&id=${id}&key=${youtube_key}`;
 }
 
-export function getPlaylistById(id: string, results: string) {
+/**
+ * Get playlist by ID
+ * @param {string} id - ID of YouTube playlist
+ * @param {string} results - Number of songs to get from playlist
+ * @returns {string} Constructed youtube endpoint
+ */
+export function getPlaylistById(id: string, results: string): string {
   return `${endpoint_start}/playlistItems?part=snippet&maxResults=${results}&playlistId=${id}&type=video&key=${youtube_key}`;
 }
