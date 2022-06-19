@@ -1,6 +1,6 @@
 import { BaseCommandInteraction } from 'discord.js';
 import ytldDiscord from 'ytdl-core-discord';
-import { BeatscapeClient, Song } from '../common/interfaces';
+import { CustomClient, Song } from '../common/interfaces';
 import {
   AudioResource,
   createAudioResource,
@@ -8,8 +8,8 @@ import {
 } from '@discordjs/voice';
 import { makeStreamEmbed } from '../utils/embed.js';
 
-export async function playOneSong(
-  Beatscape: BeatscapeClient,
+export async function playSong(
+  Beatscape: CustomClient,
   interaction: BaseCommandInteraction,
   song: Song
 ) {
@@ -37,7 +37,7 @@ export async function playOneSong(
     interaction.channel.send({ embeds: [streamEmbed] });
     musicQueue.player.play(stream);
   } catch (err) {
-    console.log();
+    console.log(err);
     musicQueue.connection.destroy();
     Beatscape.queue.delete(interaction.guild.id);
   }
