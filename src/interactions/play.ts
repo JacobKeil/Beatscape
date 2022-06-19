@@ -1,7 +1,7 @@
 import { BaseCommandInteraction } from 'discord.js';
 import ytdl from 'ytdl-core';
 
-import { BeatscapeClient, QueuePromise, Song } from '../common/interfaces.js';
+import { CustomClient, QueuePromise, Song } from '../common/interfaces.js';
 import { makeQueueEmbed } from '../utils/embed.js';
 import {
   createLog,
@@ -11,27 +11,35 @@ import {
   search,
 } from '../utils/helpers.js';
 
-import { playOneSong } from '../actions/play-song.js';
+import { playSong } from '../actions/play-song.js';
 import join from '../actions/join.js';
 
-export async function playSong(
-  Beatscape: BeatscapeClient,
+/**
+ * Queue embed with number of songs added
+ * @param {CustomClient} Beatscape - Custom client object
+ * @param {BaseCommandInteraction} interaction - Interaction object from user request
+ * @param {string} args - User search arguments
+ */
+export default async function play(
+  Beatscape: CustomClient,
   interaction: BaseCommandInteraction,
   args: string
 ) {
-  const guild = Beatscape.client.guilds.cache.get(interaction.guildId);
-  const member = guild.members.cache.get(interaction.member.user.id);
-  const voiceChannel = member.voice.channel;
-
-  let validate = ytdl.validateURL(args);
-  let url: string = ``;
-  let songs: Song[] = [];
+  await interaction.deleteReply();
 
   if (!args) {
     return interaction.channel.send(
       'Please add keyword to search or URL for video.'
     );
   }
+
+  const guild = Beatscape.guilds.cache.get(interaction.guildId);
+  const member = guild.members.cache.get(interaction.member.user.id);
+  const voiceChannel = member.voice.channel;
+
+  let validate = ytdl.validateURL(args);
+  let url: string = ``;
+  let songs: Song[] = [];
 
   if (!validate) {
     url = search(args);
@@ -64,7 +72,7 @@ export async function playSong(
 
     try {
       await join(Beatscape, interaction);
-      playOneSong(Beatscape, interaction, queuePromise.songs[0]);
+      playSong(Beatscape, interaction, queuePromise.songs[0]);
     } catch (err) {
       console.log(err);
       queuePromise.connection.destroy();
