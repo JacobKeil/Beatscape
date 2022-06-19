@@ -16,6 +16,12 @@ const intents = [
   Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
 ];
 
+/** User object */
+export interface User {
+  username: string;
+  avatar: string;
+}
+
 /** Song object from YouTube */
 export interface Song {
   title: string;
