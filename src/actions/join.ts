@@ -7,11 +7,16 @@ import {
   VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { BaseCommandInteraction } from 'discord.js';
-import { BeatscapeClient, QueuePromise } from '../common/interfaces';
-import { playOneSong } from './play-song.js';
+import { CustomClient, QueuePromise } from '../common/interfaces';
+import { playSong } from './play-song.js';
 
+/**
+ * Joins the voice channel that the user is in.
+ * Adds queue object for the guild into the global
+ * queue map
+ */
 export default async function join(
-  Beatscape: BeatscapeClient,
+  Beatscape: CustomClient,
   interaction: BaseCommandInteraction
 ) {
   const musicQueue: QueuePromise = Beatscape.queue.get(interaction.guild.id);
@@ -51,7 +56,7 @@ export default async function join(
         return;
       }
 
-      playOneSong(Beatscape, interaction, musicQueue.songs[0]);
+      playSong(Beatscape, interaction, musicQueue.songs[0]);
     } catch (err) {
       console.log(err);
       connection.destroy();
