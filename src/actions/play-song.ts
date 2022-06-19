@@ -1,12 +1,13 @@
 import { BaseCommandInteraction } from 'discord.js';
 import ytldDiscord from 'ytdl-core-discord';
-import { CustomClient, Song } from '../common/interfaces';
+import { CustomClient, Song, User } from '../common/interfaces';
 import {
   AudioResource,
   createAudioResource,
   StreamType,
 } from '@discordjs/voice';
 import { makeStreamEmbed } from '../utils/embed.js';
+import { getAvatar } from '../utils/helpers.js';
 
 export async function playSong(
   Beatscape: CustomClient,
@@ -33,7 +34,12 @@ export async function playSong(
       }
     );
 
-    let streamEmbed = makeStreamEmbed(musicQueue.songs[0]);
+    let user: User = {
+      username: `${interaction.member.user.username}#${interaction.member.user.discriminator}`,
+      avatar: getAvatar(interaction),
+    };
+
+    let streamEmbed = makeStreamEmbed(musicQueue.songs[0], user);
     interaction.channel.send({ embeds: [streamEmbed] });
     musicQueue.player.play(stream);
   } catch (err) {
