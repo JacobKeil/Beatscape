@@ -2,9 +2,9 @@ import { BaseCommandInteraction } from 'discord.js';
 import ytdl from 'ytdl-core';
 
 import { CustomClient, QueuePromise, Song } from '../common/interfaces.js';
-import { makeQueueEmbed } from '../utils/embed.js';
 import {
   createLog,
+  endSession,
   fetchData,
   getPlaylistById,
   getVideoById,
@@ -13,6 +13,7 @@ import {
 
 import { playSong } from '../actions/play-song.js';
 import join from '../actions/join.js';
+import { makeQueueString } from '../utils/embed.js';
 
 /**
  * Queue embed with number of songs added
@@ -75,13 +76,16 @@ export default async function play(
       playSong(Beatscape, interaction, queuePromise.songs[0]);
     } catch (err) {
       console.log(err);
-      queuePromise.connection.destroy();
-      Beatscape.queue.delete(interaction.guild.id);
+      endSession(
+        Beatscape,
+        interaction.guild.id,
+        'Error joining voice channel'
+      );
       return;
     }
   } else {
     musicQueue.songs.push.apply(musicQueue.songs, songs);
-    let queueEmbed = makeQueueEmbed(songs);
-    return interaction.channel.send({ embeds: [queueEmbed] });
+    let message = makeQueueString(songs);
+    return interaction.channel.send(message);
   }
 }

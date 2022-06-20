@@ -7,7 +7,7 @@ import {
   StreamType,
 } from '@discordjs/voice';
 import { makeStreamEmbed } from '../utils/embed.js';
-import { getAvatar } from '../utils/helpers.js';
+import { endSession, getAvatar } from '../utils/helpers.js';
 
 export async function playSong(
   Beatscape: CustomClient,
@@ -17,34 +17,27 @@ export async function playSong(
   const musicQueue = Beatscape.queue.get(interaction.guild.id);
 
   if (!song) {
-    musicQueue.connection.destroy();
-    Beatscape.queue.delete(interaction.guild.id);
+    endSession(Beatscape, interaction.guild.id, 'No song present');
     return;
   }
 
-  try {
-    const stream: AudioResource = createAudioResource(
-      await ytldDiscord(song.url, {
-        filter: 'audioonly',
-        quality: 'highestaudio',
-        highWaterMark: 1 << 25,
-      }),
-      {
-        inputType: StreamType.Opus,
-      }
-    );
+  const stream: AudioResource = createAudioResource(
+    await ytldDiscord(song.url, {
+      filter: 'audioonly',
+      quality: 'highestaudio',
+      highWaterMark: 1 << 25,
+    }),
+    {
+      inputType: StreamType.Opus,
+    }
+  );
 
-    let user: User = {
-      username: `${interaction.member.user.username}#${interaction.member.user.discriminator}`,
-      avatar: getAvatar(interaction),
-    };
+  let user: User = {
+    username: `${interaction.member.user.username}#${interaction.member.user.discriminator}`,
+    avatar: getAvatar(interaction),
+  };
 
-    let streamEmbed = makeStreamEmbed(musicQueue.songs[0], user);
-    interaction.channel.send({ embeds: [streamEmbed] });
-    musicQueue.player.play(stream);
-  } catch (err) {
-    console.log(err);
-    musicQueue.connection.destroy();
-    Beatscape.queue.delete(interaction.guild.id);
-  }
+  let streamEmbed = makeStreamEmbed(musicQueue.songs[0], user);
+  interaction.channel.send({ embeds: [streamEmbed] });
+  musicQueue.player.play(stream);
 }
