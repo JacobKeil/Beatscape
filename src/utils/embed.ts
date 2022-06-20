@@ -22,24 +22,20 @@ export function makeStreamEmbed(song: Song, user: User) {
     .setAuthor({
       name: user.username,
       iconURL: user.avatar || defaultIcon,
-    })
-    .setTimestamp();
+    });
   return streamEmbed;
 }
 
 /**
- * Queue embed with number of songs added
- * @param {Song[]} songs - An array of Song objects
- * @returns Queue embed with number of songs added
+ * Queue message with number of songs added
+ * @param {Song[]} songsAdded - Array of added songs
+ * @returns Queue message string
  */
-export function makeQueueEmbed(songs: Song[]) {
-  let queueEmbed: MessageEmbed;
-  queueEmbed = new MessageEmbed()
-    .setTitle(`${songs.length} Songs Added`)
-    .setColor('#c70606')
-    .setTimestamp();
-
-  return queueEmbed;
+export function makeQueueString(songsAdded: Song[]): string {
+  let message = `🎧 \`${songsAdded.length} ${
+    songsAdded.length == 1 ? 'song' : 'songs'
+  } added to the queue\``;
+  return message;
 }
 
 /**
@@ -49,7 +45,6 @@ export function makeQueueEmbed(songs: Song[]) {
 export function makeErrorEmbed() {
   let errorEmbed = new MessageEmbed()
     .setColor('#fc03fc')
-    .setDescription('Error occurred: `please try again`')
-    .setTimestamp();
+    .setDescription('Error occurred: `please try again`');
   return errorEmbed;
 }
