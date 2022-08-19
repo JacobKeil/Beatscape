@@ -6,7 +6,7 @@ import {
   joinVoiceChannel,
   VoiceConnectionStatus,
 } from '@discordjs/voice';
-import { BaseCommandInteraction } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { CustomClient, QueuePromise } from '../common/interfaces';
 import { playSong } from './play-song.js';
 
@@ -17,7 +17,7 @@ import { playSong } from './play-song.js';
  */
 export default async function join(
   Beatscape: CustomClient,
-  interaction: BaseCommandInteraction
+  interaction: CommandInteraction
 ) {
   const musicQueue: QueuePromise = Beatscape.queue.get(interaction.guild.id);
 

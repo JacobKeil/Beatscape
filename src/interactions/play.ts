@@ -1,6 +1,8 @@
-import { BaseCommandInteraction } from 'discord.js';
-import ytdl from 'ytdl-core';
+import { config } from 'dotenv';
+config();
 
+import { CommandInteraction } from 'discord.js';
+import ytdl from 'ytdl-core';
 import { CustomClient, QueuePromise, Song } from '../common/interfaces.js';
 import {
   createLog,
@@ -18,13 +20,13 @@ import { makeQueueString } from '../utils/embed.js';
 /**
  * Queue embed with number of songs added
  * @param {CustomClient} Beatscape - Custom client object
- * @param {BaseCommandInteraction} interaction - Interaction object from user request
- * @param {string} args - User search arguments
+ * @param {CommandInteraction} interaction - Interaction object from user request
+ * @param {string | number | boolean} args - User search arguments
  */
 export default async function play(
   Beatscape: CustomClient,
-  interaction: BaseCommandInteraction,
-  args: string
+  interaction: CommandInteraction,
+  args: string | number | boolean
 ) {
   await interaction.deleteReply();
 
@@ -38,24 +40,29 @@ export default async function play(
   const member = guild.members.cache.get(interaction.member.user.id);
   const voiceChannel = member.voice.channel;
 
-  let validate = ytdl.validateURL(args);
+  let validate = ytdl.validateURL(args.toString());
   let url: string = ``;
   let songs: Song[] = [];
 
   if (!validate) {
-    url = search(args);
+    url = search(args.toString());
   } else if (validate) {
-    if (args.includes('list=')) {
-      let playlistId: string = args.split('&')[1].split('=')[1];
+    if (args.toString().includes('list=')) {
+      let playlistId: string = args.toString().split('&')[1].split('=')[1];
       url = getPlaylistById(playlistId, '30');
     } else {
-      let video_id = ytdl.getURLVideoID(args);
+      let video_id = ytdl.getURLVideoID(args.toString());
       url = getVideoById(video_id);
     }
   }
 
   songs = await fetchData(url);
-  createLog(interaction, songs[0]);
+  if (process.env.ENVIRONMENT === 'Production') {
+    createLog(interaction, songs[0]);
+    console.log('Log created');
+  } else {
+    console.log('No log created, in development!');
+  }
   const musicQueue: QueuePromise = Beatscape.queue.get(interaction.guild.id);
 
   if (!musicQueue) {

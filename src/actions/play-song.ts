@@ -1,4 +1,4 @@
-import { BaseCommandInteraction } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import ytldDiscord from 'ytdl-core-discord';
 import { CustomClient, Song, User } from '../common/interfaces';
 import {
@@ -11,7 +11,7 @@ import { endSession, getAvatar } from '../utils/helpers.js';
 
 export async function playSong(
   Beatscape: CustomClient,
-  interaction: BaseCommandInteraction,
+  interaction: CommandInteraction,
   song: Song
 ) {
   const musicQueue = Beatscape.queue.get(interaction.guild.id);
@@ -21,23 +21,28 @@ export async function playSong(
     return;
   }
 
-  const stream: AudioResource = createAudioResource(
-    await ytldDiscord(song.url, {
-      filter: 'audioonly',
-      quality: 'highestaudio',
-      highWaterMark: 1 << 25,
-    }),
-    {
-      inputType: StreamType.Opus,
-    }
-  );
+  try {
+    console.log('Before resource creation');
+    const stream: AudioResource = createAudioResource(
+      await ytldDiscord(song.url, {
+        filter: 'audioonly',
+        quality: 'highestaudio',
+        highWaterMark: 1 << 25,
+      }),
+      {
+        inputType: StreamType.Opus,
+      }
+    );
 
-  let user: User = {
-    username: `${interaction.member.user.username}#${interaction.member.user.discriminator}`,
-    avatar: getAvatar(interaction),
-  };
+    let user: User = {
+      username: `${interaction.member.user.username}#${interaction.member.user.discriminator}`,
+      avatar: getAvatar(interaction),
+    };
 
-  let streamEmbed = makeStreamEmbed(musicQueue.songs[0], user);
-  interaction.channel.send({ embeds: [streamEmbed] });
-  musicQueue.player.play(stream);
+    let streamEmbed = makeStreamEmbed(musicQueue.songs[0], user);
+    interaction.channel.send({ embeds: [streamEmbed] });
+    musicQueue.player.play(stream);
+  } catch (error) {
+    console.log(error);
+  }
 }

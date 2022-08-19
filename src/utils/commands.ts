@@ -1,8 +1,12 @@
-import { Constants } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 import { CustomClient } from '../common/interfaces.js';
 import { endSession } from '../utils/helpers.js';
 import controls from '../interactions/index.js';
 
+/**
+ * Registers all slash commands globally
+ * @param {CustomClient} Beatscape - DiscordJS client
+ */
 export function registerCommands(Beatscape: CustomClient) {
   let commands: any;
   commands = Beatscape.application.commands;
@@ -15,7 +19,7 @@ export function registerCommands(Beatscape: CustomClient) {
         name: 'search',
         description: 'search, link, or playlist link.',
         required: true,
-        type: Constants.ApplicationCommandOptionTypes.STRING,
+        type: ApplicationCommandOptionType.String,
       },
     ],
   });
@@ -57,12 +61,12 @@ export function registerCommands(Beatscape: CustomClient) {
     }
 
     const { commandName, options } = interaction;
-    const search = options.getString('search');
+    const search = options.get('search');
 
     try {
       switch (commandName) {
         case 'play':
-          controls.play(Beatscape, interaction, search);
+          controls.play(Beatscape, interaction, search.value);
           break;
         case 'stop':
           controls.stop(Beatscape, interaction);

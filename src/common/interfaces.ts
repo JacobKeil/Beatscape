@@ -2,18 +2,18 @@ import { registerCommands } from '../utils/commands.js';
 import { AudioPlayer, VoiceConnection } from '@discordjs/voice';
 import {
   Client,
-  Intents,
+  GatewayIntentBits,
   VoiceBasedChannel,
   TextBasedChannel,
 } from 'discord.js';
 
 // DiscordJS client intents
 const intents = [
-  Intents.FLAGS.GUILDS,
-  Intents.FLAGS.GUILD_MESSAGES,
-  Intents.FLAGS.GUILD_MEMBERS,
-  Intents.FLAGS.GUILD_VOICE_STATES,
-  Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.GuildMembers,
+  GatewayIntentBits.GuildVoiceStates,
+  GatewayIntentBits.GuildMessageReactions,
 ];
 
 /** User object */

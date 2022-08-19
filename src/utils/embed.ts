@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Song, User } from '../common/interfaces';
 
 const defaultIcon = 'https://cdn.discordapp.com/embed/avatars/0.png';
@@ -14,7 +14,7 @@ export function makeStreamEmbed(song: Song, user: User) {
     ${song.title}
     [Link to video](${song.url})
   `;
-  const streamEmbed = new MessageEmbed()
+  const streamEmbed = new EmbedBuilder()
     .setTitle(`Now Streaming`)
     .setColor('#c70606')
     .setThumbnail(song.thumbnail)
@@ -43,7 +43,7 @@ export function makeQueueString(songsAdded: Song[]): string {
  * @returns Generic error embed
  */
 export function makeErrorEmbed() {
-  let errorEmbed = new MessageEmbed()
+  let errorEmbed = new EmbedBuilder()
     .setColor('#fc03fc')
     .setDescription('Error occurred: `please try again`');
   return errorEmbed;

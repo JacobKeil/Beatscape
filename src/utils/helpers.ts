@@ -6,7 +6,7 @@ const domain = process.env.DOMAIN;
 const endpoint_start = `https://www.googleapis.com/youtube/v3`;
 import axios from 'axios';
 import { decode } from 'html-entities';
-import { BaseCommandInteraction } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { CustomClient, Log, Song } from '../common/interfaces';
 
 /**
@@ -43,10 +43,7 @@ export async function fetchData(url: string): Promise<Song[]> {
  * @param {Interaction} interaction - Interaction object from user input
  * @param {Song} song - Song object that was played
  */
-export async function createLog(
-  interaction: BaseCommandInteraction,
-  song: Song
-) {
+export async function createLog(interaction: CommandInteraction, song: Song) {
   let log: Log = {
     discordId: interaction.member.user.id,
     guildId: interaction.guild.id,
@@ -78,10 +75,10 @@ export function endSession(Beatscape: CustomClient, guildId: string, err: any) {
 
 /**
  * Get avatar for specific user
- * @param {BaseCommandInteraction} interaction - Interaction object
+ * @param {CommandInteraction} interaction - Interaction object
  * @returns {string} Constructed avatar URL
  */
-export function getAvatar(interaction: BaseCommandInteraction): string {
+export function getAvatar(interaction: CommandInteraction): string {
   return `https://cdn.discordapp.com/avatars/${interaction.member.user.id}/${interaction.member.user.avatar}`;
 }
 
